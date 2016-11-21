@@ -1,0 +1,118 @@
+import sofia.micro.*;
+
+// -------------------------------------------------------------------------
+/**
+ *  This test class tests the functionality of the GameEntity class. It checks
+ *  whether the timer works properly, as well as the functionality of the act()
+ *  method.
+ *
+ *  @author Dante Wiggins (danwte90)
+ *  @version 2015.03.18
+ */
+public class GameEntityTest extends TestCase
+{
+    //~ Fields ................................................................
+    private GameEntity gameEntity;
+
+    //~ Constructor ...........................................................
+
+    // ----------------------------------------------------------
+    /**
+     * Creates a new GameEntityTest test object.
+     */
+    public GameEntityTest()
+    {
+        // The constructor is usually empty in unit tests, since it runs
+        // once for the whole class, not once for each test method.
+        // Per-test initialization should be placed in setUp() instead.
+    }
+
+    //~ Methods ...............................................................
+    // ----------------------------------------------------------
+    /**
+     * Sets up the test fixture.
+     * Called before every test case method.
+     */
+    public void setUp()
+    {
+        gameEntity = new GameEntity();
+    }
+
+    // ----------------------------------------------------------
+
+    /**
+     * Tests whether the GameEntity object was properly initialized.
+     * The default timer period is 80, and the intial timer value is 0.
+     */
+    public void testConstructor() {
+        assertEquals(80, gameEntity.getTimerPeriod());
+        assertEquals(0, gameEntity.getTimer());
+    }
+
+    /**
+     * Tests if setting and getting the period of the timer functions properly.
+     */
+    public void testTimerPeriod() {
+        gameEntity.setTimerPeriod(50);
+        assertEquals(50, gameEntity.getTimerPeriod());
+    }
+
+    /**
+     * Tests if getting and resetting the timer functions properly.
+     * The timer value should reset to be equal to the period.
+     */
+    public void testTimer() {
+        assertEquals(0, gameEntity.getTimer());
+        gameEntity.resetTimer();
+        assertEquals(80, gameEntity.getTimer());
+    }
+
+    /**
+     * Tests whether the isTimerRunning() method functions properly.
+     * It should be false when 0, and true otherwise.
+     */
+    public void testIsTimerRunning() {
+        assertFalse(gameEntity.isTimerRunning());
+        gameEntity.resetTimer();
+        assertTrue(gameEntity.isTimerRunning());
+    }
+    
+    /**
+     * Tests the act() method when the timer is running. The only
+     * action is that the timer gets decremented.
+     */
+    public void testActWhenTimerIsRunning() {
+        gameEntity.resetTimer();
+        assertEquals(80, gameEntity.getTimer());
+        gameEntity.act();
+        assertEquals(79, gameEntity.getTimer());        
+    }
+    
+    /**
+     * Tests the act() method when the timer is not running. The
+     * timer should not be decremented when already at 0.
+     */
+    public void testActWhenTimerIsNotRunning() {
+        assertEquals(0, gameEntity.getTimer());
+        gameEntity.act();
+        assertEquals(0, gameEntity.getTimer());
+    }
+    
+    /**
+     * Tests the act() method when the timer runs out, i.e. when
+     * it decreases from 1 to 0. The onTimer() method should be called,
+     * though it does nothing.
+     */
+    public void testActWhenTimerRunsOut() {
+        gameEntity.resetTimer();
+        for (int i = 0; i < 79; i++) {
+            gameEntity.act();
+        }
+        assertEquals(1, gameEntity.getTimer());
+        gameEntity.act();
+        assertEquals(0, gameEntity.getTimer());
+        // If the onTimer() method was non-empty, its functionality should be
+        // checked here as well
+    }
+        
+}
